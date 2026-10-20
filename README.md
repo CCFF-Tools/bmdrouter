@@ -14,7 +14,7 @@ Use **Dark mode** in the header to switch themes. The app follows your system pr
 
 **Matrix** shows all 40 inputs as rows and all 40 outputs as columns. Click a cell to document an output’s source; click it again to clear. Assigning a different input replaces that output’s previous source. One input can feed multiple outputs. Use arrow keys to move between cells and Space/Enter to toggle. Headers stay visible as you scroll. This view always shows all ports, independently of list filters. Documented routes save locally and in version 2 backups; version 1 backups still import, with empty routes. List/Grid output entries and printed lists show assigned sources.
 
-Edit, List, and Grid share data and support search, input/output selection, and the unlabeled filter. Printing always produces the full read-only list.
+Edit, List, and Grid share data and support search, input/output selection, and mutually exclusive Labeled only / Unlabeled only filters. Printing always produces the full read-only list.
 
 ## Run
 
