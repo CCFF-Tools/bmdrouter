@@ -2,6 +2,14 @@
 
 A browser-based documentation tool for a Blackmagic Design VideoHub 40×40. Label all 40 inputs and 40 outputs, add locations and notes, search, print the full port list, and import/export JSON backups. This tool does not connect to or control a router.
 
+## Views
+
+- **Edit**: update labels, locations, notes, and the router name.
+- **List**: read-only port list with notes shown inline.
+- **Grid**: read-only numbered port tiles, with unlabeled ports visually distinguished. This is a port inventory, not a live routing crosspoint matrix.
+
+All three views share data and support search, input/output selection, and the unlabeled filter. Printing always produces the full read-only list.
+
 ## Run
 
 From `/workspace/bmdrouter`, run `npm start` (Python 3 required), then open the server on port 3000 in your browser. No dependency installation or build is required. Run `npm test` with Node.js 18+ for backup validation tests.
