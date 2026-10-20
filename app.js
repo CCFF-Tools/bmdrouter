@@ -10,7 +10,7 @@ function save(){try{localStorage.setItem(key,JSON.stringify(data));$('save-statu
 function render(){
   $('device-name').readOnly=mode!=='edit';
   $('view-hint').textContent=mode==='edit'?'Click any field to edit. Your changes save as you type.':mode==='list'?'Read-only port list. Switch to Edit to make changes.':'Read-only port grid. Switch to Edit to make changes.';
-  document.querySelectorAll('[data-mode]').forEach(button=>{button.classList.toggle('active',button.dataset.mode===mode);button.setAttribute('aria-pressed',String(button.dataset.mode===mode));});
+  document.querySelectorAll('button[data-mode]').forEach(button=>{button.classList.toggle('active',button.dataset.mode===mode);button.setAttribute('aria-pressed',String(button.dataset.mode===mode));});
   const query=$('search').value.trim().toLowerCase(), onlyEmpty=$('unlabeled').checked;
   const root=$('ports');root.replaceChildren();root.classList.toggle('single',view!=='all');root.dataset.mode=mode;let matches=0;
   for(const side of ['inputs','outputs']){
@@ -48,7 +48,7 @@ function render(){
 }
 $('device-name').value=data.name;
 $('device-name').addEventListener('input',e=>{data.name=e.target.value;save();});
-document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{mode=button.dataset.mode;render();}));
+document.querySelectorAll('button[data-mode]').forEach(button=>button.addEventListener('click',()=>{mode=button.dataset.mode;render();}));
 $('search').addEventListener('input',render);$('unlabeled').addEventListener('change',render);
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{view=button.dataset.view;document.querySelectorAll('[data-view]').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});render();}));
 $('export').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download=`video-router-matrix-${new Date().toISOString().slice(0,10)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});

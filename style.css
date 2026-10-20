@@ -4,8 +4,8 @@
 @media print{@page{margin:12mm}body,main{background:white}main{padding:0;max-width:none}header,.toolbar,.hint,.intro>button,footer,.disclaimer,dialog{display:none!important}.intro{margin-bottom:15px}h1{font-size:24px}.device{padding:10px}.ports{display:block}.port-group{margin-bottom:15px;break-before:page;overflow:visible}.port-row{break-inside:avoid;padding:5px 12px}.port-row input::placeholder,.port-row textarea::placeholder{color:transparent}.port-row input,.port-row textarea{padding:3px}.port-row summary{display:none}.port-row textarea{height:auto;border:0}.group-heading{padding:10px}}
 
 .display-toolbar{display:flex;justify-content:flex-start;margin-bottom:18px}
-.display-toolbar .view{border-color:#64748b}
-.display-toolbar button{min-width:84px;font-size:14px}
+.display-toolbar .view{border-color:#64748b;width:100%}
+.display-toolbar button{flex:1;min-width:0;min-height:44px;font-size:14px}
 .device-detail>input[readonly]{cursor:default}
 .port-label,.port-location{font-size:13px;line-height:1.5;padding:6px 5px;min-width:0;overflow-wrap:anywhere;white-space:pre-wrap}
 .port-label{font-weight:600}.port-location{color:#475569}
