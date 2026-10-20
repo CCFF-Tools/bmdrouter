@@ -1,5 +1,5 @@
 {
-  "name": "videohub-portbook",
+  "name": "video-router-matrix",
   "private": true,
   "type": "module",
   "scripts": { "start": "python3 -m http.server 3000 --bind 0.0.0.0", "test": "node --test" }
