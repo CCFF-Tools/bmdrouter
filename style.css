@@ -22,3 +22,23 @@
 @media(max-width:800px){.port-grid,.ports.single .port-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:500px){.port-grid,.ports.single .port-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media print{.display-toolbar{display:none}.port-label,.port-location{padding:0;font-size:11px}.port-notes{font-size:10px}.port-row{border-color:#94a3b8}}
+
+[hidden]{display:none!important}
+.ports[data-mode="matrix"]{display:block}
+.matrix-panel{min-width:0;background:#fff;border:1px solid #94a3b8;border-radius:10px;overflow:hidden}
+.matrix-legend,.matrix-status{font-size:12px;line-height:1.6;margin:12px 16px;color:#334155}
+.matrix-status{font-weight:600}
+.matrix-scroll{max-height:70vh;overflow:auto;position:relative;isolation:isolate;scroll-padding:180px 0 0 180px}
+.routing-matrix{border-collapse:separate;border-spacing:0;table-layout:fixed;width:max-content;font-size:12px}
+.routing-matrix th,.routing-matrix td{border-right:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;padding:0}
+.routing-matrix thead th{position:sticky;top:0;z-index:2;background:#e2e8f0;height:170px;width:44px;min-width:44px;vertical-align:bottom}
+.routing-matrix .matrix-corner{left:0;z-index:4;min-width:180px;width:180px;vertical-align:middle;padding:12px;text-align:left}
+.routing-matrix tbody th{position:sticky;left:0;z-index:1;background:#f1f5f9;min-width:180px;width:180px;max-width:180px;text-align:left;padding:8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.matrix-output-number{display:block;text-align:center;padding:6px;border-top:1px solid #94a3b8}
+.matrix-output-label{display:block;writing-mode:vertical-rl;transform:rotate(180deg);height:130px;max-height:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 12px}
+.crosspoint{display:block;width:44px;height:44px;min-height:44px;border-radius:0;background:#fff;padding:0;color:#fff;font-size:20px}
+.crosspoint:hover{background:#dbeafe;filter:none}.crosspoint[aria-pressed="true"]{background:#1d4ed8;color:#fff}
+.crosspoint:focus-visible{outline:3px solid #0f172a;outline-offset:-3px}
+.routing-matrix tbody tr:hover th{background:#dbeafe}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:500px){.display-toolbar button{padding:8px 5px}.routing-matrix .matrix-corner,.routing-matrix tbody th{min-width:120px;width:120px;max-width:120px}.matrix-scroll{scroll-padding-left:120px}}

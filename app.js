@@ -1,4 +1,5 @@
-import { blank, validate } from './model.js';
+import { renderMatrix } from './matrix.js?v=20261020-matrix1';
+import { blank, validate } from './model.js?v=20261020-matrix1';
 const key='portbook-v1';
 let data=blank(), view='all', mode='edit', pending=null;
 const $=id=>document.getElementById(id);
@@ -9,10 +10,12 @@ function count(){const n=[...data.inputs,...data.outputs].filter(p=>p.label.trim
 function save(){try{localStorage.setItem(key,JSON.stringify(data));$('save-status').textContent='✓ Saved in this browser';}catch{$('save-status').textContent='Unable to save — export a backup before closing.';}count();}
 function render(){
   $('device-name').readOnly=mode!=='edit';
-  $('view-hint').textContent=mode==='edit'?'Click any field to edit. Your changes save as you type.':mode==='list'?'Read-only port list. Switch to Edit to make changes.':'Read-only port grid. Switch to Edit to make changes.';
+  document.querySelector('.toolbar').hidden=mode==='matrix';
+  $('view-hint').textContent=mode==='matrix'?'Click a cell to document a route; click it again to clear. Arrow keys move between cells. Documentation only — no hardware control.':mode==='edit'?'Click any field to edit. Your changes save as you type.':mode==='list'?'Read-only port list. Switch to Edit to make changes.':'Read-only port grid. Switch to Edit to make changes.';
   document.querySelectorAll('button[data-mode]').forEach(button=>{button.classList.toggle('active',button.dataset.mode===mode);button.setAttribute('aria-pressed',String(button.dataset.mode===mode));});
   const query=$('search').value.trim().toLowerCase(), onlyEmpty=$('unlabeled').checked;
   const root=$('ports');root.replaceChildren();root.classList.toggle('single',view!=='all');root.dataset.mode=mode;let matches=0;
+  if(mode==='matrix'){renderMatrix(root,data,save);$('no-results').hidden=true;count();return;}
   for(const side of ['inputs','outputs']){
     if(view!=='all'&&view!==side) continue;
     const section=document.createElement('section');section.className=`port-group ${side}`;
@@ -32,6 +35,7 @@ function render(){
         const label=document.createElement('span');label.className='port-label';label.textContent=port.label||'Unlabeled';row.append(label);
         const location=document.createElement('span');location.className='port-location';location.textContent=port.location;row.append(location);
         if(port.notes){const notes=document.createElement('p');notes.className='port-notes';notes.textContent=port.notes;row.append(notes);}
+        if(side==='outputs' && data.routes[i]!==null){const route=document.createElement('p');route.className='port-notes';const source=data.routes[i];route.textContent=`Documented source: Input ${source}${data.inputs[source-1].label ? ' — '+data.inputs[source-1].label : ''}`;row.append(route);}
         body.append(row);return;
       }
       for(const field of ['label','location','notes']){

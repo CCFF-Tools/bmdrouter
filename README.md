@@ -8,7 +8,9 @@ A browser-based documentation tool for a Blackmagic Design VideoHub 40×40. Labe
 - **List**: read-only port list with notes shown inline.
 - **Grid**: read-only numbered port tiles, with unlabeled ports visually distinguished. This is a port inventory, not a live routing crosspoint matrix.
 
-All three views share data and support search, input/output selection, and the unlabeled filter. Printing always produces the full read-only list.
+**Matrix** shows all 40 inputs as rows and all 40 outputs as columns. Click a cell to document an output’s source; click it again to clear. Assigning a different input replaces that output’s previous source. One input can feed multiple outputs. Use arrow keys to move between cells and Space/Enter to toggle. Headers stay visible as you scroll. This view always shows all ports, independently of list filters. Documented routes save locally and in version 2 backups; version 1 backups still import, with empty routes. List/Grid output entries and printed lists show assigned sources.
+
+Edit, List, and Grid share data and support search, input/output selection, and the unlabeled filter. Printing always produces the full read-only list.
 
 ## Run
 
