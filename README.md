@@ -2,6 +2,10 @@
 
 A browser-based documentation tool for a Blackmagic Design VideoHub 40×40. Label all 40 inputs and 40 outputs, add locations and notes, search, print the full port list, and import/export JSON backups. This tool does not connect to or control a router.
 
+## Appearance
+
+Use **Dark mode** in the header to switch themes. The app follows your system preference until you choose a theme, then remembers your choice in this browser. Printing always uses the light palette. Theme settings do not change port documentation or backups.
+
 ## Views
 
 - **Edit**: update labels, locations, notes, and the router name.
