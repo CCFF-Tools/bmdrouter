@@ -1,6 +1,15 @@
 name: Windows helper
 on:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the tested ZIP as a preview release
+        type: boolean
+        default: false
+      release_tag:
+        description: Preview release tag
+        type: string
+        default: v0.1.0-windows-preview
   push:
     branches: [main]
     paths: ['*.js', '*.html', '*.css', 'helper/**', 'tests/**', 'docs/windows-helper.md', '.github/workflows/windows-helper.yml']
@@ -43,3 +52,29 @@ jobs:
             dist/Video-Router-Matrix-Windows-x64.zip
             dist/Video-Router-Matrix-Windows-x64.zip.sha256
           if-no-files-found: error
+  release:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Video-Router-Matrix-Windows-x64
+          path: dist
+      - name: Verify and publish preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-windows-preview$ ]] || exit 1
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          path = Path('dist/Video-Router-Matrix-Windows-x64.zip')
+          expected = Path(str(path) + '.sha256').read_text().split()[0]
+          assert hashlib.sha256(path.read_bytes()).hexdigest() == expected, 'ZIP checksum mismatch'
+          PY
+          gh release create "$RELEASE_TAG" dist/Video-Router-Matrix-Windows-x64.zip dist/Video-Router-Matrix-Windows-x64.zip.sha256 --target "$GITHUB_SHA" --title "Windows helper $RELEASE_TAG" --notes-file helper/RELEASE_NOTES.md --prerelease
