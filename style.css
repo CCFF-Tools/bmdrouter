@@ -50,3 +50,15 @@
 .theme-toggle[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .search input::placeholder{color:var(--muted);opacity:1}
 @media(max-width:650px){header{height:auto;min-height:82px;flex-wrap:wrap;gap:10px;padding-top:14px;padding-bottom:14px}.brand{font-size:20px}}
+
+.file-exchange{margin-top:28px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.file-exchange h2{font-size:18px;margin:0 0 18px}.file-exchange h3{font-size:14px;margin:0 0 8px}
+.file-exchange p{font-size:12px;line-height:1.6;color:var(--muted);margin:6px 0}
+.exchange-row{display:flex;justify-content:space-between;align-items:center;gap:20px}.exchange-row>div:first-child{max-width:550px}
+.exchange-row .footer-actions{flex-shrink:0}.routing-files{border-top:1px solid var(--line);margin-top:18px;padding-top:18px;font-size:13px}.routing-files summary{cursor:pointer;font-weight:600}.routing-files .footer-actions{justify-content:flex-start;margin-top:14px}
+#exchange-status:empty{display:none}#exchange-status{margin-top:16px;color:var(--text)}
+#exchange-dialog{max-width:min(680px,calc(100vw - 32px));background:var(--surface)}
+#exchange-preview{max-height:35vh;overflow:auto;padding:12px 12px 12px 30px;border:1px solid var(--border);border-radius:6px;font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+#exchange-dialog .footer-actions{flex-wrap:wrap}button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:800px){.exchange-row{flex-direction:column;align-items:flex-start}.file-exchange{padding:18px}.file-exchange .footer-actions{flex-wrap:wrap}}
+@media print{.file-exchange{display:none}}

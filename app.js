@@ -1,3 +1,4 @@
+import { setupFileControls } from './file-controls.js?v=20261021-files1';
 import { renderMatrix } from './matrix.js?v=20261020-matrix1';
 import { blank, validate } from './model.js?v=20261020-matrix1';
 const key='portbook-v1';
@@ -65,3 +66,5 @@ let printState;
 window.addEventListener('beforeprint',()=>{printState={view,mode,query:$('search').value,onlyEmpty:$('unlabeled').checked,onlyLabeled:$('labeled').checked};view='all';mode='list';$('search').value='';$('unlabeled').checked=false;$('labeled').checked=false;render();document.querySelectorAll('details').forEach(d=>{d.open=!!d.querySelector('textarea').value;});});
 window.addEventListener('afterprint',()=>{if(!printState)return;view=printState.view;mode=printState.mode;$('search').value=printState.query;$('unlabeled').checked=printState.onlyEmpty;$('labeled').checked=printState.onlyLabeled;render();printState=null;});
 $('print').addEventListener('click',()=>window.print());render();if(startupError)$('save-status').textContent=startupError;
+
+setupFileControls(()=>data, imported=>{data=imported;$('device-name').value=data.name;save();render();});

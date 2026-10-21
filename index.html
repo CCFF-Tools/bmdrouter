@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Video Router Matrix</title><script src="theme.js?v=20261020-dark1"></script><link rel="stylesheet" href="style.css?v=20261020-dark1"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Video Router Matrix</title><script src="theme.js?v=20261020-dark1"></script><link rel="stylesheet" href="style.css?v=20261021-files1"></head>
 <body>
 <header><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">▦</span> Video Router Matrix</a><button id="theme-toggle" class="secondary theme-toggle" type="button" aria-pressed="false">Dark mode</button></header>
 <main>
@@ -10,9 +10,18 @@
   <div class="toolbar"><div class="view" role="group" aria-label="Port view"><button class="active" data-view="all" aria-pressed="true">All ports</button><button data-view="inputs" aria-pressed="false">Inputs</button><button data-view="outputs" aria-pressed="false">Outputs</button></div><div class="filters"><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Find a label, location, or port…" aria-label="Search ports"></label><label class="empty-filter"><input id="labeled" type="checkbox"> Labeled only</label><label class="empty-filter"><input id="unlabeled" type="checkbox"> Unlabeled only</label></div></div>
   <div class="hint"><span id="view-hint">Click any field to edit. Your changes save as you type.</span><span id="save-status" role="status">Saved in this browser</span></div>
   <div id="ports" class="ports"></div><p id="no-results" hidden>No matching ports. Try another search or clear your filters.</p>
+  <section class="file-exchange" aria-label="Videohub files">
+    <h2>Videohub files</h2>
+    <div class="exchange-row"><div><h3>Label set</h3><p>For Videohub Setup → gear icon → Load label set. Exports all 40 inputs and 40 outputs, including blank labels.</p></div><div class="footer-actions"><button id="import-labels" class="secondary">Import label set</button><button id="export-labels" class="primary">Export label set</button></div></div>
+    <input id="file-labels" type="file" accept=".txt,.csv,text/plain,text/csv" hidden>
+    <details class="routing-files"><summary>Routing files</summary><p>Routing uses Blackmagic’s Ethernet protocol text format. <strong>Load label set does not load routing.</strong> Applying a routing file requires a protocol-capable sender; this browser app only imports and exports the file. Unassigned outputs are omitted on export.</p><div class="footer-actions"><button id="import-routing" class="secondary">Import routing</button><button id="export-routing" class="secondary">Export routing commands</button></div></details>
+    <input id="file-routing" type="file" accept=".txt,text/plain" hidden>
+    <p id="exchange-status" role="status"></p>
+  </section>
   <footer><div><strong>Backup &amp; restore</strong><p>Saved on this browser only. Export a backup to share it or keep it safe.</p></div><div class="footer-actions"><button id="import" class="secondary">Import backup</button><button id="export" class="primary">Export backup ↓</button><input id="file" type="file" accept="application/json,.json" hidden></div></footer>
   <p class="disclaimer">Documentation only · Port numbers match the router’s physical inputs and outputs. This tool does not connect to or control your VideoHub.</p>
 </main>
 <dialog id="restore"><h2>Replace this port list?</h2><p>Importing replaces the current router name all 80 ports, and documented routes. Older backups without routes will clear existing route assignments. Export a backup first if you want to keep them.</p><div class="footer-actions"><button id="cancel" class="secondary">Cancel</button><button id="confirm" class="primary">Replace port list</button></div></dialog>
-<script type="module" src="app.js?v=20261020-labeled1"></script>
+<dialog id="exchange-dialog" aria-labelledby="exchange-title"><h2 id="exchange-title">Import file?</h2><p id="exchange-summary"></p><ul id="exchange-preview"></ul><div class="footer-actions"><button id="exchange-backup" class="secondary">Back up current data</button><button id="exchange-cancel" class="secondary">Cancel</button><button id="exchange-apply" class="primary">Apply import</button></div></dialog>
+<script type="module" src="app.js?v=20261021-files1"></script>
 </body></html>

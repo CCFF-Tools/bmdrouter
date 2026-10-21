@@ -2,6 +2,14 @@
 
 A browser-based documentation tool for a Blackmagic Design VideoHub 40×40. Label all 40 inputs and 40 outputs, add locations and notes, search, print the full port list, and import/export JSON backups. This tool does not connect to or control a router.
 
+## Blackmagic file exchange
+
+Use **Export label set** to download `Labels Videohub 40x40.txt`, in the headerless, one-based CSV structure used by Videohub Setup → gear icon → **Load label set**. **Import label set** previews changes and preserves notes, locations, and routing. Export includes all 80 ports, regardless of filters. Export rejects uncertain characters rather than silently changing labels.
+
+The separate **Routing files** section imports/exports zero-based `VIDEO OUTPUT ROUTING:` command blocks. **These are not Setup label-set files**; applying them to hardware requires a protocol-capable sender. This app does not connect to hardware. Full app JSON backups still preserve all documentation.
+
+See [file format evidence and limitations](docs/videohub-file-formats.md). Native Blackmagic software/hardware acceptance has not been verified in this environment.
+
 ## Appearance
 
 Use **Dark mode** in the header to switch themes. The app follows your system preference until you choose a theme, then remembers your choice in this browser. Printing always uses the light palette. Theme settings do not change port documentation or backups.
