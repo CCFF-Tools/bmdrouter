@@ -62,3 +62,18 @@
 #exchange-dialog .footer-actions{flex-wrap:wrap}button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:800px){.exchange-row{flex-direction:column;align-items:flex-start}.file-exchange{padding:18px}.file-exchange .footer-actions{flex-wrap:wrap}}
 @media print{.file-exchange{display:none}}
+
+.router-control{padding:20px 24px;margin:0 0 24px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.connection-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.connection-heading h2{font-size:17px;margin:0}
+.router-control p{font-size:12px;line-height:1.6;color:var(--muted)}#connection-status{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--text);margin:0}
+.connection-dot{display:inline-block;flex-shrink:0;width:13px;height:13px;border-radius:50%;background:#dc2626;border:1px solid #991b1b} .connected .connection-dot{background:#16a34a;border-color:#15803d}
+.connection-fields,.router-actions{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-top:16px}
+.router-control label{font-size:12px;display:flex;flex-direction:column;gap:6px}.router-control input,.router-control select{background:var(--surface);color:var(--text);border:1px solid var(--border);padding:10px;border-radius:6px;max-width:100%;font:inherit}
+.connection-fields select{max-width:260px}.router-control details{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;font-size:13px}.router-control summary{cursor:pointer;font-weight:600}
+.discover-controls label{margin:12px 0}.discover-controls select{width:100%}#discovered-routers{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.download-helper{display:inline-block;font-size:13px;font-weight:600;padding:10px 14px;border-radius:6px;background:var(--accent);color:var(--on-accent);text-decoration:none}
+.live-table-scroll{max-height:340px;overflow:auto;margin-top:12px}.live-table-scroll table{border-collapse:collapse;width:100%;text-align:left;font-size:12px}.live-table-scroll th{position:sticky;top:0;background:var(--soft)}.live-table-scroll th,.live-table-scroll td{padding:8px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+#helper-message:empty{display:none}#helper-message{color:var(--text);margin-bottom:0}
+#router-preview{max-width:min(700px,calc(100vw - 32px));background:var(--surface)}#router-preview-list{max-height:35vh;overflow:auto;border:1px solid var(--border);padding:12px 12px 12px 30px;font-size:13px;line-height:1.7;overflow-wrap:anywhere}#router-preview .footer-actions{flex-wrap:wrap}
+@media(max-width:800px){.router-control{padding:18px}.connection-fields label{min-width:0;max-width:100%}.connection-fields select{max-width:100%}}
+@media print{.router-control{display:none}}

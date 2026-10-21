@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { blank } from '../model.js';
-import { exportLabelSet, parseLabelSet, exportRouting, parseRouting, mergeVideohubFile } from '../videohub-files.js';
+import { exportLabelSet, parseLabelSet, exportRouting, parseRouting, exportConfiguration, parseConfiguration, mergeVideohubFile } from '../videohub-files.js';
 
 test('native label export uses one-based ports, CRLF, inputs first, and all 80 records',()=>{
  const d=blank();d.inputs[0].label='Camera 1';d.outputs[39].label='Last monitor';
@@ -35,4 +35,21 @@ test('routing imports snapshot safely, preserves other documentation, reports ig
 });
 test('rejects invalid route numbers, duplicates, mismatched routers and empty command blocks',()=>{
  for(const input of ['VIDEO OUTPUT ROUTING:\n40 0\n\n','VIDEO OUTPUT ROUTING:\n0 40\n\n','VIDEO OUTPUT ROUTING:\n0 -1\n\n','VIDEO OUTPUT ROUTING:\n0 1\n0 2\n\n','VIDEO OUTPUT ROUTING:\n\n','VIDEOHUB DEVICE:\nVideo inputs: 20\n\nVIDEO OUTPUT ROUTING:\n0 1\n\n','Output,1,Monitor'])assert.throws(()=>parseRouting(input),input);
+});
+
+test('full protocol configuration round trips all labels and routes without locks or lost metadata', () => {
+ const data=blank();data.inputs[0].label='Caméra, "A"';data.outputs[39].label=' Monitor ';data.routes=Array.from({length:40},(_,i)=>40-i);
+ const text=exportConfiguration(data);assert(text.startsWith('INPUT LABELS:\n0 Caméra, "A"\n'));assert(text.endsWith('39 0\n\n'));assert(!text.includes('LOCKS'));
+ const local=blank();local.inputs[0].notes='Cable 12';local.inputs[0].location='Stage';
+ const imported=mergeVideohubFile(local,parseConfiguration(text+'VIDEO OUTPUT LOCKS:\n0 F\n\n'));
+ assert.deepEqual(imported.routes,data.routes);assert.equal(imported.outputs[39].label,' Monitor ');assert.equal(imported.inputs[0].notes,'Cable 12');assert.equal(imported.inputs[0].location,'Stage');
+ assert(parseConfiguration(text+'VIDEO OUTPUT LOCKS:\n0 F\n\n').ignored.includes('VIDEO OUTPUT LOCKS'));
+});
+test('full configuration rejects incomplete tables, duplicate labels, protocol injection and partial label blocks', () => {
+ assert.throws(()=>exportConfiguration(blank()),/all 40/);
+ const data=blank();data.routes.fill(1);const text=exportConfiguration(data);
+ assert.throws(()=>parseConfiguration(text.replace('39 0\n','')),/40 output routes/);
+ assert.throws(()=>parseConfiguration(text.replace('0 \n','0 \n0 Duplicate\n')),/duplicate/);
+ assert.throws(()=>parseConfiguration(text.replace('INPUT LABELS:','IGNORED LABELS:')),/40 input labels/);
+ data.inputs[0].label='Injected\n\n';assert.throws(()=>exportConfiguration(data),/control characters/);
 });

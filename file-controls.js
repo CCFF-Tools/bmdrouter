@@ -1,4 +1,4 @@
-import { exportLabelSet, parseLabelSet, exportRouting, parseRouting, mergeVideohubFile } from './videohub-files.js?v=20261021-files1';
+import { exportLabelSet, parseLabelSet, exportRouting, parseRouting, exportConfiguration, parseConfiguration, mergeVideohubFile } from './videohub-files.js?v=20261021-helper1';
 
 export function setupFileControls(getData, replaceData) {
   const $ = id => document.getElementById(id);
@@ -19,10 +19,14 @@ export function setupFileControls(getData, replaceData) {
   $('export-routing').addEventListener('click', () => {
     try {
       download(exportRouting(getData()), 'Videohub Routing 40x40.txt');
-      message('Routing exported as Ethernet protocol commands. This is not a Videohub Setup label-set file; applying it requires a protocol-capable sender. Unassigned outputs are omitted.');
+      message('Routing exported as Ethernet protocol commands. Apply it using the Windows helper. This is not a Videohub Setup label-set file. Unassigned outputs are omitted.');
     } catch (error) { message(error.message); }
   });
-  for (const kind of ['labels', 'routing']) {
+  $('export-configuration').addEventListener('click', () => {
+    try { download(exportConfiguration(getData()), 'Videohub Configuration 40x40.txt'); message('Full configuration exported: 80 labels and 40 routes. Import and send using the Windows helper.'); }
+    catch (error) { message(error.message); }
+  });
+  for (const kind of ['labels', 'routing', 'configuration']) {
     $(`import-${kind}`).addEventListener('click', () => $(`file-${kind}`).click());
     $(`file-${kind}`).addEventListener('change', async event => {
       const file = event.target.files[0];
@@ -34,10 +38,10 @@ export function setupFileControls(getData, replaceData) {
         const prefix = new Uint8Array(bytes, 0, Math.min(2, bytes.byteLength));
         const encoding = prefix[0] === 255 && prefix[1] === 254 ? 'utf-16le' : prefix[0] === 254 && prefix[1] === 255 ? 'utf-16be' : 'utf-8';
         const text = new TextDecoder(encoding, {fatal: true}).decode(bytes);
-        pending = (kind === 'labels' ? parseLabelSet : parseRouting)(text);
+        pending = ({labels: parseLabelSet, routing: parseRouting, configuration: parseConfiguration}[kind])(text);
         const current = getData();
-        $('exchange-title').textContent = kind === 'labels' ? 'Import label set?' : 'Import routing?';
-        $('exchange-summary').textContent = `${file.name}: ${pending.entries.length} ${kind === 'labels' ? 'labels' : 'routing assignments'}. Only listed ports will be updated in this browser. Locations, notes, and ${kind === 'labels' ? 'routing' : 'labels'} stay unchanged. No changes are sent to your router.${pending.ignored?.length ? ' Other protocol blocks are ignored: ' + pending.ignored.join(', ') + '.' : ''}`;
+        $('exchange-title').textContent = kind === 'labels' ? 'Import label set?' : kind === 'routing' ? 'Import routing?' : 'Import full configuration?';
+        $('exchange-summary').textContent = `${file.name}: ${pending.entries.length} entries. Only listed labels or routes will be updated in this browser. Router name, locations, and notes stay unchanged. No changes are sent to your router.${pending.ignored?.length ? ' Other protocol blocks are ignored: ' + pending.ignored.join(', ') + '.' : ''}`;
         const list = $('exchange-preview'); list.replaceChildren();
         let changes = 0;
         for (const entry of pending.entries) {

@@ -1,0 +1,45 @@
+name: Windows helper
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['*.js', '*.html', '*.css', 'helper/**', 'tests/**', 'docs/windows-helper.md', '.github/workflows/windows-helper.yml']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+      - name: Test protocol, control, files, and local API
+        run: npm test
+      - name: Build portable Windows package
+        shell: pwsh
+        run: ./helper/build-windows.ps1
+      - name: Smoke test bundled Windows runtime and server
+        shell: pwsh
+        run: |
+          $Root = Join-Path $PWD 'dist/Video-Router-Matrix-Windows'
+          $Process = Start-Process -FilePath "$Root/runtime/node.exe" -ArgumentList 'helper/main.js' -WorkingDirectory $Root -PassThru -NoNewWindow
+          try {
+            $Ready = $false
+            for ($Attempt = 0; $Attempt -lt 20; $Attempt++) {
+              try {
+                $Response = Invoke-WebRequest 'http://127.0.0.1:49340/'
+                if ($Response.Content -match 'videohub-helper') { $Ready = $true; break }
+              } catch { Start-Sleep -Milliseconds 250 }
+            }
+            if (-not $Ready) { throw 'Bundled helper did not serve the app.' }
+            $Session = Invoke-RestMethod 'http://127.0.0.1:49340/api/session' -Headers @{'X-Video-Router'='1'}
+            if (-not $Session.token) { throw 'Missing helper session token.' }
+          } finally { Stop-Process -Id $Process.Id -ErrorAction SilentlyContinue }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Video-Router-Matrix-Windows-x64
+          path: |
+            dist/Video-Router-Matrix-Windows-x64.zip
+            dist/Video-Router-Matrix-Windows-x64.zip.sha256
+          if-no-files-found: error

@@ -1,4 +1,5 @@
-import { setupFileControls } from './file-controls.js?v=20261021-files1';
+import { setupFileControls } from './file-controls.js?v=20261021-helper1';
+import { setupHelperControls } from './helper-controls.js?v=20261021-helper1';
 import { renderMatrix } from './matrix.js?v=20261020-matrix1';
 import { blank, validate } from './model.js?v=20261020-matrix1';
 const key='portbook-v1';
@@ -12,7 +13,7 @@ function save(){try{localStorage.setItem(key,JSON.stringify(data));$('save-statu
 function render(){
   $('device-name').readOnly=mode!=='edit';
   document.querySelector('.toolbar').hidden=mode==='matrix';
-  $('view-hint').textContent=mode==='matrix'?'Click a cell to document a route; click it again to clear. Arrow keys move between cells. Documentation only — no hardware control.':mode==='edit'?'Click any field to edit. Your changes save as you type.':mode==='list'?'Read-only port list. Switch to Edit to make changes.':'Read-only port grid. Switch to Edit to make changes.';
+  $('view-hint').textContent=mode==='matrix'?'Click a cell to document a route; click it again to clear. Arrow keys move between cells. Changes are saved here. Use the helper’s Send full routing table to apply them to the router.':mode==='edit'?'Click any field to edit. Your changes save as you type.':mode==='list'?'Read-only port list. Switch to Edit to make changes.':'Read-only port grid. Switch to Edit to make changes.';
   document.querySelectorAll('button[data-mode]').forEach(button=>{button.classList.toggle('active',button.dataset.mode===mode);button.setAttribute('aria-pressed',String(button.dataset.mode===mode));});
   const query=$('search').value.trim().toLowerCase(), onlyEmpty=$('unlabeled').checked, onlyLabeled=$('labeled').checked;
   const root=$('ports');root.replaceChildren();root.classList.toggle('single',view!=='all');root.dataset.mode=mode;let matches=0;
@@ -63,8 +64,10 @@ $('file').addEventListener('change',async e=>{const file=e.target.files[0];if(!f
 $('cancel').addEventListener('click',()=>{pending=null;$('restore').close();});
 $('confirm').addEventListener('click',()=>{if(!pending)return;data=pending;pending=null;$('device-name').value=data.name;$('restore').close();save();render();});
 let printState;
-window.addEventListener('beforeprint',()=>{printState={view,mode,query:$('search').value,onlyEmpty:$('unlabeled').checked,onlyLabeled:$('labeled').checked};view='all';mode='list';$('search').value='';$('unlabeled').checked=false;$('labeled').checked=false;render();document.querySelectorAll('details').forEach(d=>{d.open=!!d.querySelector('textarea').value;});});
+window.addEventListener('beforeprint',()=>{printState={view,mode,query:$('search').value,onlyEmpty:$('unlabeled').checked,onlyLabeled:$('labeled').checked};view='all';mode='list';$('search').value='';$('unlabeled').checked=false;$('labeled').checked=false;render();document.querySelectorAll('.port-row details').forEach(d=>{d.open=!!d.querySelector('textarea')?.value;});});
 window.addEventListener('afterprint',()=>{if(!printState)return;view=printState.view;mode=printState.mode;$('search').value=printState.query;$('unlabeled').checked=printState.onlyEmpty;$('labeled').checked=printState.onlyLabeled;render();printState=null;});
 $('print').addEventListener('click',()=>window.print());render();if(startupError)$('save-status').textContent=startupError;
 
 setupFileControls(()=>data, imported=>{data=imported;$('device-name').value=data.name;save();render();});
+
+setupHelperControls(()=>data, imported=>{data=validate(imported);$('device-name').value=data.name;save();render();});

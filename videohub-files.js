@@ -86,3 +86,37 @@ export function mergeVideohubFile(data, parsed) {
   }
   return validate(result);
 }
+
+// A portable protocol configuration contains labels and video routing only.
+// It deliberately excludes locks, network settings, and device identity.
+export function exportConfiguration(data) {
+  const valid = validate(data);
+  if (valid.routes.some(source => source === null)) throw new Error('A full configuration needs all 40 routes. Pull from the router or assign the missing sources first.');
+  const blocks = ['inputs', 'outputs'].map(side => {
+    const rows = valid[side].map((port, index) => {
+      if (/[\x00-\x1f\x7f]/.test(port.label)) throw new Error(`${side} ${index + 1}: labels cannot contain line breaks or control characters.`);
+      return `${index} ${port.label}`;
+    });
+    return `${side === 'inputs' ? 'INPUT' : 'OUTPUT'} LABELS:\n${rows.join('\n')}\n\n`;
+  });
+  return blocks.join('') + exportRouting(valid);
+}
+
+export function parseConfiguration(text) {
+  const routing = parseRouting(text), entries = [], seen = new Set();
+  let side = null;
+  lines(text).forEach((line, index) => {
+    if (!line) { side = null; return; }
+    if (/^[A-Z][A-Z0-9 _-]*:$/.test(line)) {
+      side = line === 'INPUT LABELS:' ? 'inputs' : line === 'OUTPUT LABELS:' ? 'outputs' : null;
+      return;
+    }
+    if (!side) return;
+    const match = /^(\d+) (.*)$/.exec(line);
+    if (!match || match[2].length > 2000 || /[\x00-\x1f\x7f]/.test(match[2])) throw new Error(`Line ${index + 1}: invalid protocol label.`);
+    add(entries, seen, {side, index: portIndex(match[1], 0, index + 1), value: match[2]}, index + 1);
+  });
+  for (const name of ['inputs', 'outputs']) if (entries.filter(entry => entry.side === name).length !== 40) throw new Error('A full configuration must contain all 40 input labels and 40 output labels. Use Import label set for labels only.');
+  if (routing.entries.length !== 40) throw new Error('A full configuration must contain all 40 output routes. Use Import routing for partial routing files.');
+  return {kind: 'configuration', entries: [...entries, ...routing.entries], ignored: routing.ignored.filter(name => !['INPUT LABELS', 'OUTPUT LABELS'].includes(name))};
+}

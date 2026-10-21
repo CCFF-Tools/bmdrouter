@@ -1,6 +1,6 @@
 # Videohub file formats and evidence
 
-Researched 2026-10-21. The app remains entirely browser based and sends nothing to the router.
+Researched 2026-10-21. The hosted site imports/exports files in the browser. The optional Windows helper can send imported labels and routes to hardware after a separate preview and confirmation.
 
 ## Videohub Setup: Load label set
 
@@ -37,4 +37,10 @@ Sources:
 
 The app can import/export routing commands and extract routes from a protocol snapshot. It does not export lock overrides or network settings. Unassigned outputs are omitted; it does not invent a disconnect command. Import updates only listed output assignments, retaining other routes and all labels/notes/locations. Other protocol sections are reported as ignored; non-40×40 snapshots are rejected.
 
-**No native Blackmagic Setup routing-file importer was established. Load label set imports labels only.** The routing export requires an external protocol-capable sender to affect hardware and is labeled accordingly. It is not presented as a native Setup configuration file.
+**No native Blackmagic Setup routing-file importer was established. Load label set imports labels only.** The Windows helper implements the protocol sender. Routing text is not presented as a native Setup configuration file.
+
+## Full configuration through the helper
+
+Full configuration files contain `INPUT LABELS:`, `OUTPUT LABELS:`, and `VIDEO OUTPUT ROUTING:` blocks, using zero-based port numbers, UTF-8 text, and a blank line after each block. All 40 labels per side and all 40 routes are required. Input accepts CRLF and the existing BOM-marked text encodings. Output does not include device identity, locks, network settings, notes, or locations. The importer reports other blocks as ignored and never executes their contents.
+
+Import stages labels and routes in browser documentation. The helper's **Send labels & routing** action validates them, previews differences, checks locks and stale state, then sends only changed values and verifies readback. Protocol labels allow commas, quotes, and Unicode; control characters are rejected to prevent command injection. Native Setup CSV export retains its separate conservative restrictions. Physical router handling of label characters/lengths remains to be verified.
