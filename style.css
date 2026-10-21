@@ -77,3 +77,5 @@
 #router-preview{max-width:min(700px,calc(100vw - 32px));background:var(--surface)}#router-preview-list{max-height:35vh;overflow:auto;border:1px solid var(--border);padding:12px 12px 12px 30px;font-size:13px;line-height:1.7;overflow-wrap:anywhere}#router-preview .footer-actions{flex-wrap:wrap}
 @media(max-width:800px){.router-control{padding:18px}.connection-fields label{min-width:0;max-width:100%}.connection-fields select{max-width:100%}}
 @media print{.router-control{display:none}}
+
+.helper-downloads{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}#helper-download p a{color:var(--text);text-decoration:underline}

@@ -1,4 +1,4 @@
-import { exportLabelSet, parseLabelSet, exportRouting, parseRouting, exportConfiguration, parseConfiguration, mergeVideohubFile } from './videohub-files.js?v=20261021-helper1';
+import { exportLabelSet, parseLabelSet, exportRouting, parseRouting, exportConfiguration, parseConfiguration, mergeVideohubFile } from './videohub-files.js?v=20261021-mac1';
 
 export function setupFileControls(getData, replaceData) {
   const $ = id => document.getElementById(id);
@@ -19,11 +19,11 @@ export function setupFileControls(getData, replaceData) {
   $('export-routing').addEventListener('click', () => {
     try {
       download(exportRouting(getData()), 'Videohub Routing 40x40.txt');
-      message('Routing exported as Ethernet protocol commands. Apply it using the Windows helper. This is not a Videohub Setup label-set file. Unassigned outputs are omitted.');
+      message('Routing exported as Ethernet protocol commands. Apply it using the Windows or Mac helper. This is not a Videohub Setup label-set file. Unassigned outputs are omitted.');
     } catch (error) { message(error.message); }
   });
   $('export-configuration').addEventListener('click', () => {
-    try { download(exportConfiguration(getData()), 'Videohub Configuration 40x40.txt'); message('Full configuration exported: 80 labels and 40 routes. Import and send using the Windows helper.'); }
+    try { download(exportConfiguration(getData()), 'Videohub Configuration 40x40.txt'); message('Full configuration exported: 80 labels and 40 routes. Import and send using the Windows or Mac helper.'); }
     catch (error) { message(error.message); }
   });
   for (const kind of ['labels', 'routing', 'configuration']) {

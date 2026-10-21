@@ -52,7 +52,7 @@ export function setupHelperControls(getData, replaceData) {
   }
   async function refresh() {
     try { status(await api('state')); }
-    catch { status({connected: false}); message('The Windows helper is unavailable. Start it again and reload this page.'); }
+    catch { status({connected: false}); message('The helper is unavailable. Start it again and reload this page.'); }
   }
   async function run(action) {
     if (busy) return;

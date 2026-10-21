@@ -1,6 +1,6 @@
 # Videohub file formats and evidence
 
-Researched 2026-10-21. The hosted site imports/exports files in the browser. The optional Windows helper can send imported labels and routes to hardware after a separate preview and confirmation.
+Researched 2026-10-21. The hosted site imports/exports files in the browser. The optional Windows or Mac helper can send imported labels and routes to hardware after a separate preview and confirmation.
 
 ## Videohub Setup: Load label set
 
@@ -37,7 +37,7 @@ Sources:
 
 The app can import/export routing commands and extract routes from a protocol snapshot. It does not export lock overrides or network settings. Unassigned outputs are omitted; it does not invent a disconnect command. Import updates only listed output assignments, retaining other routes and all labels/notes/locations. Other protocol sections are reported as ignored; non-40×40 snapshots are rejected.
 
-**No native Blackmagic Setup routing-file importer was established. Load label set imports labels only.** The Windows helper implements the protocol sender. Routing text is not presented as a native Setup configuration file.
+**No native Blackmagic Setup routing-file importer was established. Load label set imports labels only.** The Windows or Mac helper implements the protocol sender. Routing text is not presented as a native Setup configuration file.
 
 ## Full configuration through the helper
 

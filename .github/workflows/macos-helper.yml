@@ -1,0 +1,84 @@
+name: Mac helper
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish both tested Mac ZIPs as a preview release
+        type: boolean
+        default: false
+      release_tag:
+        description: Preview release tag
+        type: string
+        default: v0.1.0-macos-preview
+  push:
+    branches: [main]
+    paths: ['*.js', '*.html', '*.css', 'helper/**', 'tests/**', 'docs/macos-helper.md', '.github/workflows/macos-helper.yml']
+permissions:
+  contents: read
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+          - arch: x64
+            runner: macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24.19.0'
+      - name: Verify native architecture and test protocol, control, files and API
+        env:
+          EXPECTED_ARCH: ${{ matrix.arch }}
+        run: |
+          node --input-type=module -e "import assert from 'node:assert/strict'; assert.equal(process.arch, process.env.EXPECTED_ARCH); assert.equal(process.platform, 'darwin');"
+          npm test
+      - name: Build portable Mac package
+        env:
+          PACKAGE_ARCH: ${{ matrix.arch }}
+        run: bash helper/build-macos.sh "$PACKAGE_ARCH"
+      - name: Extract ZIP and smoke test the packaged launcher
+        env:
+          PACKAGE_ARCH: ${{ matrix.arch }}
+        run: |
+          /usr/bin/ditto -x -k "dist/Video-Router-Matrix-Mac-$PACKAGE_ARCH.zip" "$RUNNER_TEMP/helper smoke"
+          node helper/smoke-macos.mjs "$RUNNER_TEMP/helper smoke/Video-Router-Matrix-Mac-$PACKAGE_ARCH"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Video-Router-Matrix-Mac-${{ matrix.arch }}
+          path: |
+            dist/Video-Router-Matrix-Mac-${{ matrix.arch }}.zip
+            dist/Video-Router-Matrix-Mac-${{ matrix.arch }}.zip.sha256
+          if-no-files-found: error
+  release:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: Video-Router-Matrix-Mac-*
+          merge-multiple: true
+          path: dist
+      - name: Verify and publish both Mac previews
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-macos-preview$ ]] || exit 1
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          for arch in ('arm64', 'x64'):
+              path = Path(f'dist/Video-Router-Matrix-Mac-{arch}.zip')
+              expected = Path(str(path) + '.sha256').read_text().split()[0]
+              assert hashlib.sha256(path.read_bytes()).hexdigest() == expected, f'{arch} ZIP checksum mismatch'
+          PY
+          gh release create "$RELEASE_TAG" dist/Video-Router-Matrix-Mac-*.zip dist/Video-Router-Matrix-Mac-*.zip.sha256 --target "$GITHUB_SHA" --title "Mac helper $RELEASE_TAG" --notes-file helper/RELEASE_NOTES_MACOS.md --prerelease

@@ -1,10 +1,15 @@
 # Video Router Matrix
 
-A browser-based documentation tool for a Blackmagic Design VideoHub 40×40. Label all 40 inputs and 40 outputs, add locations and notes, search, print the full port list, and import/export backups. The optional Windows helper adds network discovery, live status, pulls, separate label/routing sends, and direct route control.
+A browser-based documentation tool for a Blackmagic Design VideoHub 40×40. Label all 40 inputs and 40 outputs, add locations and notes, search, print the full port list, and import/export backups. The optional Windows or Mac helper adds network discovery, live status, pulls, separate label/routing sends, and direct route control.
 
-## Windows helper
+## Windows and Mac helpers
 
-Download the portable x64 ZIP from [Releases](https://github.com/CCFF-Tools/bmdrouter/releases), extract it, and double-click **Start Video Router Matrix.cmd**. It opens the interface in your browser and includes its own runtime; no build or Node.js installation is needed. Connect to the router's IP or use Find routers. See the [Windows guide](docs/windows-helper.md) for transfers, full configuration restore, and limitations.
+Download a portable ZIP from [Releases](https://github.com/CCFF-Tools/bmdrouter/releases) and extract it:
+
+- **Windows 10/11 x64:** double-click **Start Video Router Matrix.cmd**. [Windows guide](docs/windows-helper.md).
+- **Mac, macOS 13.5+:** choose Apple silicon (`arm64`) or Intel (`x64`), then double-click **Start Video Router Matrix.command**. [Mac guide](docs/macos-helper.md), including first-open and Local Network permissions.
+
+The helper opens the interface in your browser and includes its own runtime; no build or Node.js installation is needed. Connect to the router's IP or use Find routers. The same backups and configuration files work on both platforms.
 
 The helper serves its own local copy of the app. To transfer documentation from GitHub Pages, export a JSON backup on the site and import it in the helper. Without the helper, the published site remains a documentation/file tool. Simulator validation does not replace acceptance testing on a physical Smart Videohub 12G 40×40.
 
@@ -12,7 +17,7 @@ The helper serves its own local copy of the app. To transfer documentation from 
 
 Use **Export label set** to download `Labels Videohub 40x40.txt`, in the headerless, one-based CSV structure used by Videohub Setup → gear icon → **Load label set**. **Import label set** previews changes and preserves notes, locations, and routing. Export includes all 80 ports, regardless of filters. Export rejects uncertain characters rather than silently changing labels.
 
-The separate **Routing files** section imports/exports zero-based `VIDEO OUTPUT ROUTING:` command blocks. **These are not Setup label-set files**; the Windows helper can apply imported routing to hardware. **Full configuration** imports/exports all 80 labels and all 40 routes in protocol format, excluding locks and network settings. Full app JSON backups also preserve locations and notes. Importing a file never sends it automatically.
+The separate **Routing files** section imports/exports zero-based `VIDEO OUTPUT ROUTING:` command blocks. **These are not Setup label-set files**; the Windows or Mac helper can apply imported routing to hardware. **Full configuration** imports/exports all 80 labels and all 40 routes in protocol format, excluding locks and network settings. Full app JSON backups also preserve locations and notes. Importing a file never sends it automatically.
 
 See [file format evidence and limitations](docs/videohub-file-formats.md). Native Blackmagic software/hardware acceptance has not been verified in this environment.
 

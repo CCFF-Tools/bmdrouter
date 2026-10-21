@@ -1,5 +1,5 @@
-import { setupFileControls } from './file-controls.js?v=20261021-helper1';
-import { setupHelperControls } from './helper-controls.js?v=20261021-helper1';
+import { setupFileControls } from './file-controls.js?v=20261021-mac1';
+import { setupHelperControls } from './helper-controls.js?v=20261021-mac1';
 import { renderMatrix } from './matrix.js?v=20261020-matrix1';
 import { blank, validate } from './model.js?v=20261020-matrix1';
 const key='portbook-v1';
