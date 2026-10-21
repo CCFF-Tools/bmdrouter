@@ -7,9 +7,11 @@ export class Control {
   preview(request) {
     return this.router.exclusive(async () => {
       const state = await this.router._refresh();
-      const changes = [];
+      const changes = [], targets = [];
       const add = (side, index, value) => {
-        if (state[side][index] !== value) changes.push({side, index, before: state[side][index], value});
+        const target = {side, index, before: state[side][index], value};
+        targets.push(target);
+        if (target.before !== value) changes.push(target);
       };
       if (request.kind === 'route') {
         if (![request.input, request.output].every(n => Number.isInteger(n) && n >= 1 && n <= 40)) throw new Error('Choose an input and output from 1 to 40.');
@@ -30,7 +32,7 @@ export class Control {
       const id = randomUUID();
       // Only the most recent preview can be applied. Reconnecting invalidates it.
       this.plans.clear();
-      this.plans.set(id, {changes, host: this.router.host, socket: this.router.socket, expires: Date.now() + 120000});
+      this.plans.set(id, {changes, targets, host: this.router.host, socket: this.router.socket, expires: Date.now() + 120000});
       return {id, changes, host: this.router.host, model: state.device['Model name']};
     });
   }
@@ -43,7 +45,7 @@ export class Control {
       const plan = this.plans.get(id); this.plans.delete(id);
       if (!plan || plan.expires < Date.now() || plan.socket !== this.router.socket || plan.host !== this.router.host) throw new Error('Preview expired or connection changed. Preview again.');
       const state = await this.router._refresh();
-      if (plan.changes.some(c => state[c.side][c.index] !== c.before)) throw new Error('The router changed since the preview. Nothing was sent. Preview again.');
+      if (plan.targets.some(c => state[c.side][c.index] !== c.before)) throw new Error('The router changed since the preview. Nothing was sent. Preview again.');
       this.checkLocks(plan.changes, state);
       try {
         for (const side of ['inputs', 'outputs', 'routes']) {
@@ -52,7 +54,7 @@ export class Control {
           await this.router.command(`${sections[side]}:\n${changes.map(c => `${c.index} ${side === 'routes' ? c.value - 1 : c.value}`).join('\n')}\n\n`);
         }
         const actual = await this.router._refresh();
-        const mismatches = plan.changes.filter(c => actual[c.side][c.index] !== c.value);
+        const mismatches = plan.targets.filter(c => actual[c.side][c.index] !== c.value);
         if (mismatches.length) throw new Error(`${mismatches.length} requested changes were not confirmed by readback.`);
         return {verified: plan.changes.length, snapshot: actual};
       } catch (error) {

@@ -77,6 +77,15 @@ test('ACK without applied state is a failure, not reported success', async t => 
   const plan = await control.preview({kind: 'route', input: 2, output: 1});
   await assert.rejects(control.apply(plan.id), /not confirmed by readback/);
 });
+test('full-table previews detect changes to routes that originally needed no write', async t => {
+  const {simulator, router, control} = await fixture(t);
+  const data = documentation(await router.connect('127.0.0.1')); data.routes[0] = 40;
+  const plan = await control.preview({kind: 'routing', data});
+  assert.equal(plan.changes.length, 1);
+  simulator.state.routes[39] = 1;
+  await assert.rejects(control.apply(plan.id), /changed since the preview/);
+  assert.equal(simulator.commands.filter(c => c.rows.length).length, 0);
+});
 test('NAK is surfaced and failed writes are never retried automatically', async t => {
   const {router, control, simulator} = await fixture(t, {nak: true});
   await router.connect('127.0.0.1');
